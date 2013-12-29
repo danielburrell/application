@@ -6,9 +6,9 @@ import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 
-public final class SpringApplication {
+public final class SpringBackgroundApplication {
 	private static final Logger logger = LoggerFactory
-			.getLogger(SpringApplication.class);
+			.getLogger(SpringBackgroundApplication.class);
 
 	public void run(String... configLocations) {
 
@@ -42,7 +42,7 @@ public final class SpringApplication {
 	}
 
 	public static void main(String[] args) {
-		new SpringApplication().run(args);
+		new SpringBackgroundApplication().run(args);
 	}
 
 }
