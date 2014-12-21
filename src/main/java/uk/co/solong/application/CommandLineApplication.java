@@ -10,6 +10,6 @@ public class CommandLineApplication {
         String configClass = args[0];
         ClassLoader classLoader = CommandLineApplication.class.getClassLoader();
         Class<?> aClass = classLoader.loadClass(configClass);
-        ShellFactory.createConsoleShell("hello", "", aClass.newInstance()).commandLoop(); 
+        ShellFactory.createConsoleShell("hello", "", aClass.newInstance()).commandLoop();
     }
 }
