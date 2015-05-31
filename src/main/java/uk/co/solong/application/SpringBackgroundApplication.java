@@ -7,42 +7,41 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 
 public final class SpringBackgroundApplication {
-	private static final Logger logger = LoggerFactory
-			.getLogger(SpringBackgroundApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpringBackgroundApplication.class);
 
-	public void run(String... configLocations) {
+    public void run(String... configLocations) {
 
-		if (configLocations == null || configLocations.length < 1) {
-			throw new IllegalArgumentException("Config location missing");
-		}
+        if (configLocations == null || configLocations.length < 1) {
+            throw new IllegalArgumentException("Config location missing");
+        }
 
-		GenericApplicationContext context = new GenericApplicationContext();
-		BeanDefinitionReader reader = new XmlBeanDefinitionReader(context);
-		reader.loadBeanDefinitions(configLocations);
+        GenericApplicationContext context = new GenericApplicationContext();
+        BeanDefinitionReader reader = new XmlBeanDefinitionReader(context);
+        reader.loadBeanDefinitions(configLocations);
 
-		boolean started = false;
-		try {
-			context.registerShutdownHook();
-			context.refresh();
-			logger.info("Application started");
-			started = true;
-		} catch (RuntimeException e) {
-			throw new RuntimeException("Application failed to start", e);
-		} catch (Exception e) {
-			throw new RuntimeException("Application failed to start", e);
-		} finally {
-			if (!started) {
-				try {
-					context.close();
-				} catch (Throwable e) {
-					logger.info("Application has failed. Closing context failed too");
-				}
-			}
-		}
-	}
+        boolean started = false;
+        try {
+            context.registerShutdownHook();
+            context.refresh();
+            logger.info("Application started");
+            started = true;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Application failed to start", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Application failed to start", e);
+        } finally {
+            if (!started) {
+                try {
+                    context.close();
+                } catch (Throwable e) {
+                    logger.info("Application has failed. Closing context failed too");
+                }
+            }
+        }
+    }
 
-	public static void main(String[] args) {
-		new SpringBackgroundApplication().run(args);
-	}
+    public static void main(String[] args) {
+        new SpringBackgroundApplication().run(args);
+    }
 
 }
