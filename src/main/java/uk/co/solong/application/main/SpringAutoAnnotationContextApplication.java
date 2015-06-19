@@ -20,15 +20,7 @@ public class SpringAutoAnnotationContextApplication {
 
         boolean started = false;
         try {
-            ClassPathScanningCandidateComponentProvider scanner =
-                    new ClassPathScanningCandidateComponentProvider(false);
-
-                    scanner.addIncludeFilter(new AnnotationTypeFilter(.class));
-
-                    for (BeanDefinition bd : scanner.findCandidateComponents(<TYPE_YOUR_BASE_PACKAGE_HERE>))
-                        System.out.println(bd.getBeanClassName());
-            
-            
+              
             ClassLoader classLoader = SpringAutoAnnotationContextApplication.class.getClassLoader();
             Class<?> aClass = classLoader.loadClass(configClass);
             context.register(aClass);
