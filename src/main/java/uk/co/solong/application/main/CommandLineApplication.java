@@ -1,4 +1,4 @@
-package uk.co.solong.application;
+package uk.co.solong.application.main;
 
 import java.io.IOException;
 

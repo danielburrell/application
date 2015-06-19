@@ -1,4 +1,4 @@
-package uk.co.solong.config;
+package uk.co.solong.application.config;
 
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;

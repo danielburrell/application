@@ -1,8 +1,10 @@
-package uk.co.solong.application;
+package uk.co.solong.application.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import asg.cliche.ShellFactory;
 
 /**
  * Generic application harness for Java-Config Annotation based applications. To
@@ -11,21 +13,23 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @author Daniel Burrell
  *
  */
-public class SpringAnnotationContextApplication {
-    private static final Logger logger = LoggerFactory.getLogger(SpringAnnotationContextApplication.class);
+public class SpringAnnotationCommandLineApplication {
+    private static final Logger logger = LoggerFactory.getLogger(SpringAnnotationCommandLineApplication.class);
 
     public void run(String configClass) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
         boolean started = false;
         try {
-            ClassLoader classLoader = SpringAnnotationContextApplication.class.getClassLoader();
+            ClassLoader classLoader = SpringAnnotationCommandLineApplication.class.getClassLoader();
             Class<?> aClass = classLoader.loadClass(configClass);
             context.register(aClass);
             context.registerShutdownHook();
             context.refresh();
             logger.info("Application started");
             started = true;
+            ShellFactory.createConsoleShell(">", "", context.getBean("root")).commandLoop();
+            context.close();
         } catch (RuntimeException e) {
             throw new RuntimeException("Application failed to start", e);
         } catch (Exception e) {
@@ -42,7 +46,7 @@ public class SpringAnnotationContextApplication {
     }
 
     public static void main(String[] args) {
-        new SpringAnnotationContextApplication().run(args[0]);
+        new SpringAnnotationCommandLineApplication().run(args[0]);
     }
 
 }
