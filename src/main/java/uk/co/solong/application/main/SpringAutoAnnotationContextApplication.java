@@ -77,10 +77,11 @@ public class SpringAutoAnnotationContextApplication {
         }
     }
 
-    private boolean startApp(AnnotationConfigApplicationContext context, String value) throws ClassNotFoundException {
+    private boolean startApp(AnnotationConfigApplicationContext context, String rootConfiguration) throws ClassNotFoundException {
         boolean started;
+        logger.info("Using RootConfiguration: {}", rootConfiguration);
         ClassLoader classLoader = SpringAutoAnnotationContextApplication.class.getClassLoader();
-        Class<?> aClass = classLoader.loadClass(value);
+        Class<?> aClass = classLoader.loadClass(rootConfiguration);
         context.register(aClass);
         context.registerShutdownHook();
         context.refresh();
@@ -90,7 +91,13 @@ public class SpringAutoAnnotationContextApplication {
     }
 
     public static void main(String[] args) {
-        new SpringAutoAnnotationContextApplication().run(args[0]);
+        if (args.length == 1) {
+            new SpringAutoAnnotationContextApplication().run(args[0]);
+        } else if (args.length < 1) {
+            new SpringAutoAnnotationContextApplication().run("");
+        } else {
+            throw new RuntimeException("Too many arguments. Expected either 1 RootConfiguration name, or nothing");
+        }
     }
 
 }
