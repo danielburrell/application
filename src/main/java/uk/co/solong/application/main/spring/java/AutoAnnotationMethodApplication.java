@@ -1,12 +1,12 @@
-package uk.co.solong.application.main.spring.javaconfig;
+package uk.co.solong.application.main.spring.java;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -20,16 +20,36 @@ import uk.co.solong.application.annotations.MainMethod;
 import uk.co.solong.application.annotations.RootConfiguration;
 
 /**
- * Generic application harness for Java-Config Annotation based applications. To
- * use, pass the top-level config class as the first (and only) parameter.
- * //INCOMPLETE - just a copy paste. doesn't actually scan for a method yet.
- * make it the second parameter if you have to be explicit
+ * <p>
+ * Use this class when you have an application that needs to be started by
+ * invoking some non static, zero-arg method on some class, together with some
+ * JavaConfig that needs to be registered with an ApplicationContext
+ * </p>
+ * <p>
+ * Creates an AnnotationConfigApplicationContext, scans the classpath for a
+ * class marked as {@link RootConfiguration} and registers this with the
+ * context. Searches the context for a class annotated as {@link MainClass} and
+ * invokes the method annotated with {@link MainMethod} thereby starting the
+ * application.
+ * </p>
+ * 
+ * <p>
+ * Exactly 1 {@link MainClass} annotated class may be present on the classpath.
+ * <p>
+ * Multiple RootConfigurations candidates may be present on the classpath,
+ * provided that the first arg to the application is the qualifier for the
+ * {@link RootConfiguration} e.g:
+ * </p>
+ * <p>
+ * <code>@RootConfiguration(name="someQualifier")</code>
+ * </p>
+ * 
  * 
  * @author Daniel Burrell
  *
  */
-public class SpringAutoJavaConfigMethodApplication {
-    private static final Logger logger = LoggerFactory.getLogger(SpringAutoJavaConfigMethodApplication.class);
+public class AutoAnnotationMethodApplication {
+    private static final Logger logger = LoggerFactory.getLogger(AutoAnnotationMethodApplication.class);
 
     public void run(String qualifiedRootConfiguration) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -75,7 +95,7 @@ public class SpringAutoJavaConfigMethodApplication {
                 try {
                     context.close();
                 } catch (Throwable e) {
-                    logger.info("Application has failed. Closing context failed too");
+                    logger.error("Application has failed. Closing context failed too");
                 }
             }
         }
@@ -84,7 +104,7 @@ public class SpringAutoJavaConfigMethodApplication {
     private boolean startApp(AnnotationConfigApplicationContext context, String rootConfiguration) throws ClassNotFoundException {
         boolean started = false;
         logger.info("Using RootConfiguration: {}", rootConfiguration);
-        ClassLoader classLoader = SpringAutoJavaConfigMethodApplication.class.getClassLoader();
+        ClassLoader classLoader = AutoAnnotationMethodApplication.class.getClassLoader();
         Class<?> aClass = classLoader.loadClass(rootConfiguration);
         context.register(aClass);
         context.registerShutdownHook();
@@ -99,37 +119,29 @@ public class SpringAutoJavaConfigMethodApplication {
             String value = bd.iterator().next().getBeanClassName();
             Class<?> clazz = Class.forName(value);
             Collection<Method> methods = methodWithAnnotation(clazz, MainMethod.class);
-            if (methods.size() == 1) {
-                Object d = context.getBean(clazz);
-                try {
-                    Method m = methods.iterator().next();
-                    if (m.getParameterCount() > 1) {
-                        throw new RuntimeException("Cannot call a non zero argument main method");
-                    } else {
-                        started = true;
-                        m.invoke(d);
-                    }
-                    
-                } catch (Throwable e){
-                    throw new RuntimeException("Could not invoke zero argument method");                    
-                }
-            } else if (methods.size() == 0) {
-                throw new RuntimeException("No MainMethod annotation found in MainClass");
-            } else {
-                throw new RuntimeException("Multiple MainMethod annotations found in MainClass. Expected exactly 1.");
+            Validate.isTrue(methods.size() == 1, "Expected exactly 1 MainMethod, found {}", methods.size());
+
+            Object d = context.getBean(clazz);
+
+            Method m = methods.iterator().next();
+            Validate.isTrue(m.getParameterCount() == 0, "Expected 0-arg MainMethod, but found {} arguments", m.getParameterCount());
+            started = true;
+            try {
+                m.invoke(d);
+            } catch (Throwable e) {
+                throw new RuntimeException("Could not invoke zero argument method");
             }
-            
+
         }
         return started;
     }
 
     public static void main(String[] args) {
+        Validate.isTrue(args.length < 1, "Too many arguments. Expected either 1 RootConfiguration name, or nothing");
         if (args.length == 1) {
-            new SpringAutoJavaConfigMethodApplication().run(args[0]);
-        } else if (args.length < 1) {
-            new SpringAutoJavaConfigMethodApplication().run("");
+            new AutoAnnotationMethodApplication().run(args[0]);
         } else {
-            throw new RuntimeException("Too many arguments. Expected either 1 RootConfiguration name, or nothing");
+            new AutoAnnotationMethodApplication().run("");
         }
     }
 

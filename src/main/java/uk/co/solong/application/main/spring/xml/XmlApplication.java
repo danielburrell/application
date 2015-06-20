@@ -6,8 +6,21 @@ import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 
-public final class SpringXmlBackgroundApplication {
-    private static final Logger logger = LoggerFactory.getLogger(SpringXmlBackgroundApplication.class);
+/**
+ * <p>
+ * Use this for background applications that require some legacy XML config to
+ * be manually registered by specifying the full path to the XML files.
+ * </p>
+ * <p>
+ * Attempts to load the configurations provided as args and register them with
+ * the application context.
+ * </p>
+ * 
+ * @author Daniel Burrell
+ *
+ */
+public final class XmlApplication {
+    private static final Logger logger = LoggerFactory.getLogger(XmlApplication.class);
 
     public void run(String... configLocations) {
 
@@ -34,14 +47,14 @@ public final class SpringXmlBackgroundApplication {
                 try {
                     context.close();
                 } catch (Throwable e) {
-                    logger.info("Application has failed. Closing context failed too");
+                    logger.error("Application has failed. Closing context failed too");
                 }
             }
         }
     }
 
     public static void main(String[] args) {
-        new SpringXmlBackgroundApplication().run(args);
+        new XmlApplication().run(args);
     }
 
 }
