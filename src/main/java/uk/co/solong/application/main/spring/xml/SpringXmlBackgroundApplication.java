@@ -1,4 +1,4 @@
-package uk.co.solong.application.main;
+package uk.co.solong.application.main.spring.xml;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 
-public final class SpringBackgroundApplication {
-    private static final Logger logger = LoggerFactory.getLogger(SpringBackgroundApplication.class);
+public final class SpringXmlBackgroundApplication {
+    private static final Logger logger = LoggerFactory.getLogger(SpringXmlBackgroundApplication.class);
 
     public void run(String... configLocations) {
 
@@ -41,7 +41,7 @@ public final class SpringBackgroundApplication {
     }
 
     public static void main(String[] args) {
-        new SpringBackgroundApplication().run(args);
+        new SpringXmlBackgroundApplication().run(args);
     }
 
 }

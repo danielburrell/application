@@ -1,10 +1,8 @@
-package uk.co.solong.application.main;
+package uk.co.solong.application.main.spring.javaconfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import asg.cliche.ShellFactory;
 
 /**
  * Generic application harness for Java-Config Annotation based applications. To
@@ -13,23 +11,21 @@ import asg.cliche.ShellFactory;
  * @author Daniel Burrell
  *
  */
-public class SpringAnnotationCommandLineApplication {
-    private static final Logger logger = LoggerFactory.getLogger(SpringAnnotationCommandLineApplication.class);
+public class SpringExplicitJavaConfigApplication {
+    private static final Logger logger = LoggerFactory.getLogger(SpringExplicitJavaConfigApplication.class);
 
     public void run(String configClass) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
         boolean started = false;
         try {
-            ClassLoader classLoader = SpringAnnotationCommandLineApplication.class.getClassLoader();
+            ClassLoader classLoader = SpringExplicitJavaConfigApplication.class.getClassLoader();
             Class<?> aClass = classLoader.loadClass(configClass);
             context.register(aClass);
             context.registerShutdownHook();
             context.refresh();
             logger.info("Application started");
             started = true;
-            ShellFactory.createConsoleShell(">", "", context.getBean("root")).commandLoop();
-            context.close();
         } catch (RuntimeException e) {
             throw new RuntimeException("Application failed to start", e);
         } catch (Exception e) {
@@ -46,7 +42,11 @@ public class SpringAnnotationCommandLineApplication {
     }
 
     public static void main(String[] args) {
-        new SpringAnnotationCommandLineApplication().run(args[0]);
+        if (args.length == 1) {
+            new SpringExplicitJavaConfigApplication().run(args[0]);
+        } else {
+            throw new RuntimeException("Expected fully-qualified configuration classname as only parameter.");
+        }
     }
 
 }
