@@ -23,6 +23,7 @@ import uk.co.solong.application.annotations.RootConfiguration;
  * {@link RootConfiguration} annotation, and registers it with the application
  * context.
  * </p>
+ * <p>
  * Multiple RootConfigurations candidates may be present on the classpath,
  * provided that the first arg to the application is the qualifier for the
  * {@link RootConfiguration} e.g: </p>

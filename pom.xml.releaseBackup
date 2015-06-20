@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.co.solong</groupId>
     <artifactId>application</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.7-SNAPSHOT</version>
     <name>SoLong Application</name>
     <url>www.solong.co.uk/application</url>
     <description>An Application Harness Library</description>
@@ -136,6 +136,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.clichemaven</groupId>

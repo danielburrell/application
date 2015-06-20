@@ -34,7 +34,7 @@ import uk.co.solong.application.annotations.RootConfiguration;
  * </p>
  * 
  * <p>
- * Exactly 1 {@link MainClass} annotated class may be present on the classpath.
+ * Exactly 1 {@link MainClass} annotated class may be present on the classpath.</p>
  * <p>
  * Multiple RootConfigurations candidates may be present on the classpath,
  * provided that the first arg to the application is the qualifier for the
