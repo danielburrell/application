@@ -8,14 +8,16 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import uk.co.solong.application.main.spring.java.AutoAnnotationApplication;
+import uk.co.solong.application.main.spring.java.AutoAnnotationCommandLineApplication;
+import uk.co.solong.application.main.spring.java.AutoAnnotationMethodApplication;
 
 /**
- * <p>Place this annotation on the root JavaConfiguration class that should be registered with an {@link AnnotationConfigApplicationContext}</p>.
+ * <p>Place this annotation on the root JavaConfiguration class that should be registered with an {@link AnnotationConfigApplicationContext}</p>
  * <p>For use with the following classes:</p>
  * <ol>
- * <li> {@link AutoAnnotationApplication}</li>
- * <li> {@link AutoAnnotationCommandLineApplication}</li>
- * <li> {@link AutoAnnotationMethodApplication}</li>
+ * <li> {@link AutoAnnotationApplication} </li>
+ * <li> {@link AutoAnnotationCommandLineApplication} </li>
+ * <li> {@link AutoAnnotationMethodApplication} </li>
  * </ol>
  * @author Daniel Burrell
  *
