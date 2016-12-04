@@ -13,7 +13,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.StringUtils;
 
 import uk.co.solong.application.annotations.CommandLine;
-import uk.co.solong.application.annotations.MainClass;
 import uk.co.solong.application.annotations.RootConfiguration;
 import asg.cliche.ShellFactory;
 

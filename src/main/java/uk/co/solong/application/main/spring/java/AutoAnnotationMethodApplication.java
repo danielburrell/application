@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -50,16 +51,17 @@ import uk.co.solong.application.annotations.RootConfiguration;
  */
 public class AutoAnnotationMethodApplication {
     private static final Logger logger = LoggerFactory.getLogger(AutoAnnotationMethodApplication.class);
-
+    private Optional<String> packageScope;
     public void run(String qualifiedRootConfiguration) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
         boolean started = false;
         try {
+            packageScope = Optional.ofNullable(System.getProperty("uk.co.solong.package"));
             logger.info("Scanning for root configuration");
             ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
             scanner.addIncludeFilter(new AnnotationTypeFilter(RootConfiguration.class));
-            Set<BeanDefinition> bd = scanner.findCandidateComponents("");
+            Set<BeanDefinition> bd = scanner.findCandidateComponents(packageScope.orElse(""));
 
             if (bd.size() == 1) {
                 logger.info("RootConfiguration found");
@@ -113,7 +115,7 @@ public class AutoAnnotationMethodApplication {
         logger.info("Searching for main class");
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(MainClass.class));
-        Set<BeanDefinition> bd = scanner.findCandidateComponents("");
+        Set<BeanDefinition> bd = scanner.findCandidateComponents(packageScope.orElse(""));
         if (bd.size() == 1) {
             logger.info("RootConfiguration found");
             String value = bd.iterator().next().getBeanClassName();
