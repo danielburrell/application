@@ -1,6 +1,7 @@
 package uk.co.solong.application.main.spring.java;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,11 +129,15 @@ public class AutoAnnotationMethodApplication {
             Method m = methods.iterator().next();
             Validate.isTrue(m.getParameterCount() == 0, "Expected 0-arg MainMethod, but found {} arguments", m.getParameterCount());
             started = true;
+
             try {
                 m.invoke(d);
-            } catch (Throwable e) {
-                throw new RuntimeException("Could not invoke zero argument method");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Could not invoke method", e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException("Could not invoke zero argument method", e);
             }
+
 
         }
         return started;
