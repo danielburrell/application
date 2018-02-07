@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.co.solong</groupId>
     <artifactId>application</artifactId>
-    <version>0.0.14-SNAPSHOT</version>
+    <version>0.0.14</version>
     <name>SoLong Application</name>
     <url>www.solong.co.uk/application</url>
     <description>An Application Harness Library</description>
