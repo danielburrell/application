@@ -112,7 +112,7 @@ public class AutoAnnotationCommandLineApplication {
     }
 
     public static void main(String[] args) {
-        Validate.isTrue(args.length < 1, "Too many arguments. Expected either 1 RootConfiguration name, or nothing");
+        Validate.isTrue(args.length <= 1, "Too many arguments. Expected either 1 RootConfiguration name, or nothing");
         if (args.length == 1) {
             new AutoAnnotationCommandLineApplication().run(args[0]);
         } else {
