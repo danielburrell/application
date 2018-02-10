@@ -1,5 +1,6 @@
 package uk.co.solong.application.main.spring.java;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -42,31 +43,39 @@ public class AutoAnnotationWebApplication {
 
         boolean started = false;
         try {
-            logger.info("Scanning for root configuration");
-            ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-            scanner.addIncludeFilter(new AnnotationTypeFilter(RootConfiguration.class));
-            Set<BeanDefinition> bd = scanner.findCandidateComponents("");
+            if (qualifiedRootConfiguration.equals("")) {
+                logger.info("Scanning for root configuration");
+                ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+                scanner.addIncludeFilter(new AnnotationTypeFilter(RootConfiguration.class));
+                Set<BeanDefinition> bd = scanner.findCandidateComponents("");
+                Validate.isTrue(bd.size() >= 1, "Must have at least 1 Configuration class annotated with @RootConfiguration on the classpath");
 
-            Validate.isTrue(bd.size() >= 1, "Must have at least 1 Configuration class annotated with @RootConfiguration on the classpath");
-
-            if (bd.size() == 1) {
-                logger.info("RootConfiguration found");
-                String value = bd.iterator().next().getBeanClassName();
-                started = startApp(context, value);
-            } else {
-                logger.info("Multiple RootConfigurations found");
-                Validate.isTrue(!StringUtils.isEmpty(qualifiedRootConfiguration), "Multiple RootConfigurations found, but no qualifier specified");
-                boolean found = false;
-                while (bd.iterator().hasNext()) {
+                if (bd.size() == 1) {
+                    logger.info("RootConfiguration found");
                     String value = bd.iterator().next().getBeanClassName();
-                    RootConfiguration r = Class.forName(value).getAnnotation(RootConfiguration.class);
-                    if (qualifiedRootConfiguration.equals(r.name())) {
-                        found = true;
-                        started = startApp(context, value);
-                        break;
+                    started = startApp(context, value);
+                } else if (bd.size() > 1) {
+                    logger.info("Multiple RootConfigurations found");
+                    Validate.isTrue(!StringUtils.isEmpty(qualifiedRootConfiguration), "Multiple RootConfigurations found, but no qualifier specified");
+                    boolean found = false;
+                    while (bd.iterator().hasNext()) {
+                        String value = bd.iterator().next().getBeanClassName();
+                        RootConfiguration r = Class.forName(value).getAnnotation(RootConfiguration.class);
+                        if (qualifiedRootConfiguration.equals(r.name())) {
+                            found = true;
+                            started = startApp(context, value);
+                            break;
+                        }
                     }
+                    Validate.isTrue(found, "Multiple RootConfigurations found, but none match the name: {}", qualifiedRootConfiguration);
+                } else {
+                    throw new RuntimeException("No root configuration detected");
                 }
-                Validate.isTrue(found, "Multiple RootConfigurations found, but none match the name: {}", qualifiedRootConfiguration);
+            } else {
+                logger.info("RootConfiguration override set to {}. Validating class exists", qualifiedRootConfiguration);
+                ClassLoader classLoader = NamedAnnotationApplication.class.getClassLoader();
+                Class<?> aClass = classLoader.loadClass(qualifiedRootConfiguration);
+                started = startApp(context, qualifiedRootConfiguration);
             }
         } catch (RuntimeException e) {
             throw new RuntimeException("Application failed to start", e);
