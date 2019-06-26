@@ -1,7 +1,5 @@
 package uk.co.solong.application.main.spring.java;
 
-import java.util.Set;
-
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +8,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.StringUtils;
-
 import uk.co.solong.application.annotations.RootConfiguration;
+
+import java.util.Set;
 
 /**
  * <p>
